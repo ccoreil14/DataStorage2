@@ -38,4 +38,12 @@ android:hint="Optimal Number of minutes"
         android:layout_marginTop="30px"
         android:textStyle="normal|italic"
         android:textSize="30sp" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/urgencySpinner"
+        android:entries="@array/urgencyOptions"
+        android:layout_marginTop="30px" />
+
 </LinearLayout>

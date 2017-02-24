@@ -6,9 +6,12 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener {
 
@@ -20,6 +23,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        DBHandler db = new DBHandler(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         addTaskBtn = (Button) findViewById(R.id.addBtn);
@@ -30,6 +36,31 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 callAddTaskDialog();
             }
         });
+
+        Log.d("Insert: ", "Inserting ..");
+        db.addTask(new Task(3, "Make Test Tasks", "I need to make a test task to make sure all the functions are all working appropriately", "High", "Not Complete"));
+        db.addTask(new Task(1, "Run Test", "Run test to make sure all the functions are all working appropriately", "High", "Not Complete"));
+
+
+        Log.d("Reading: ", "Reading all shops after adding..");
+        List<Task> tasks= db.getAllTasks();
+
+        for (Task task: tasks) {
+            String log = "Id: " + task.getId() + " ,Name: " + task.getName() + " ,Description: " + task.getDesc() + " ,Estimated Minutes to complete: " + task.getMinutes() + " ,Urgency: " + task.getUrg() + " ,Is it Completed?: " + task.getCompletion();
+            // Writing shops to log
+            Log.d("Task: : ", log);
+        }
+
+        for(int i = 1; i <=2; i++) db.deleteTask(db.getTask(i));
+
+        Log.d("Reading: ", "Reading all shops again after deleting..");
+        tasks = db.getAllTasks();
+
+        for (Task task: tasks) {
+            String log = "Id: " + task.getId() + " ,Name: " + task.getName() + " ,Description: " + task.getDesc() + " ,Estimated Minutes to complete: " + task.getMinutes() + " ,Urgency: " + task.getUrg() + " ,Is it Completed?: " + task.getCompletion();
+            // Writing shops to log
+            Log.d("Task Yo: : ", log);
+        }
     }
 
 
