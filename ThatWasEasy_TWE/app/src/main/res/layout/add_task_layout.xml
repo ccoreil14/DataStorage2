@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/nameField"
+        android:hint="Task Name"
+        android:background="#EEE"
+        android:layout_marginTop="30px"
+        android:textStyle="normal|bold"
+        android:textSize="30sp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/descField"
+        android:hint="Task Description"
+        android:layout_weight="0.08"
+        android:background="#EEE"
+        android:layout_marginTop="30px" />
+
+    <EditText
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:inputType="number"
+android:ems="10"
+android:id="@+id/minuteField"
+android:hint="Optimal Number of minutes"
+        android:background="#EEE"
+        android:layout_marginTop="30px"
+        android:textStyle="normal|italic"
+        android:textSize="30sp" />
+</LinearLayout>
