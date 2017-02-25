@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         openAddTaskDialogBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                callAddTaskDialog();
+                myDialog.show();
             }
         });
 
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         });
 
 
-        
+
 //        Log.d("Insert: ", "Inserting ..");
 //        db.addTask(new Task(3, "Make Test Tasks", "I need to make a test task to make sure all the functions are all working appropriately", "High", "Not Complete", 0));
 //        db.addTask(new Task(1, "Run Test", "Run test to make sure all the functions are all working appropriately", "High", "Not Complete", 0));
@@ -89,13 +89,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
 
-
-    private void callAddTaskDialog()
-    {
-
-        myDialog.show();
-
-    }
 
     private void addTaskFromForm(int minutesNum, String taskName, String taskDesc, String urgencyType){
         db.addTask(new Task(minutesNum, taskName, taskDesc, urgencyType, "Not Complete", 0));
