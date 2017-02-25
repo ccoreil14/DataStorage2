@@ -11,26 +11,29 @@ public class Task {
     private String taskDesc;
     private String urgencyType;
     private String isComplete;
+    private int timerNum;
 
     public Task(){
 
     }
 
-    public Task(int id, int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete){
+    public Task(int id, int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum){
         this.id = id;
         this.minutesNum = minutesNum;
         this.taskName = taskName;
         this.taskDesc = taskDesc;
         this.urgencyType = urgencyType;
         this.isComplete = isComplete;
+        this.timerNum = timerNum;
     }
 
-    public Task(int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete){
+    public Task(int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum){
         this.minutesNum = minutesNum;
         this.taskName = taskName;
         this.taskDesc = taskDesc;
         this.urgencyType = urgencyType;
         this.isComplete = isComplete;
+        this.timerNum = timerNum;
     }
 
     public void setId(int id) {
@@ -63,6 +66,11 @@ public class Task {
         this.isComplete = isComplete;
     }
     public String getCompletion() {return isComplete;}
+
+    public void setTimerNum(int timerNum) {
+        this.timerNum = timerNum;
+    }
+    public int getTimerNum() {return timerNum;}
 
 
 }

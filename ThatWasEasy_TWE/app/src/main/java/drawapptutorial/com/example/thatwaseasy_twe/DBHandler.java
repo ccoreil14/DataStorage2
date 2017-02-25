@@ -25,6 +25,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_DESC = "task_description";
     private static final String KEY_URGENCY = "task_urgency";
     private static final String KEY_COMPLETION_STATUS = "task_isComplete";
+    private static final String KEY_TIMER_NUM= "task_timer_num";
 
     public DBHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -33,7 +34,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TASK_TABLE = "CREATE TABLE " + TABLE_TASKS+ "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"+ KEY_NUM_MINUTES + " NUMBER," + KEY_NAME + " TEXT,"
-                + KEY_DESC + " TEXT,"  + KEY_URGENCY + " TEXT,"  + KEY_COMPLETION_STATUS + " TEXT" + ")";
+                + KEY_DESC + " TEXT,"  + KEY_URGENCY + " TEXT,"  + KEY_COMPLETION_STATUS + " TEXT,"  + KEY_TIMER_NUM + " TEXT" + ")";
         db.execSQL(CREATE_TASK_TABLE);
     }
 
@@ -54,6 +55,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_DESC, task.getDesc());
         values.put(KEY_URGENCY, task.getUrg());
         values.put(KEY_COMPLETION_STATUS, task.getCompletion());
+        values.put(KEY_TIMER_NUM, task.getTimerNum());
 
 // Inserting Row
         db.insert(TABLE_TASKS, null, values);
@@ -64,13 +66,13 @@ public class DBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_TASKS, new String[]{KEY_ID, KEY_NUM_MINUTES,
-                        KEY_NAME, KEY_DESC, KEY_URGENCY, KEY_COMPLETION_STATUS}, KEY_ID + "=?",
+                        KEY_NAME, KEY_DESC, KEY_URGENCY, KEY_COMPLETION_STATUS, KEY_TIMER_NUM}, KEY_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
         Task information = new Task(Integer.parseInt(cursor.getString(0)),
-                Integer.parseInt(cursor.getString(1)), cursor.getString(2),  cursor.getString(3), cursor.getString(4), cursor.getString(5));
+                Integer.parseInt(cursor.getString(1)), cursor.getString(2),  cursor.getString(3), cursor.getString(4), cursor.getString(5), Integer.parseInt(cursor.getString(6)));
 // return shop
         return information;
     }
@@ -93,6 +95,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 task.setDesc(cursor.getString(3));
                 task.setUrg(cursor.getString(4));
                 task.setCompletion(cursor.getString(5));
+                task.setTimerNum(Integer.parseInt(cursor.getString(6)));
 // Adding contact to list
                 taskList.add(task);
             } while (cursor.moveToNext());
@@ -121,6 +124,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_URGENCY, task.getUrg());
         values.put(KEY_NUM_MINUTES, task.getMinutes());
         values.put(KEY_COMPLETION_STATUS, task.getCompletion());
+        values.put(KEY_TIMER_NUM, task.getTimerNum());
 
 // updating row
         return db.update(TABLE_TASKS, values, KEY_ID + " = ?",
