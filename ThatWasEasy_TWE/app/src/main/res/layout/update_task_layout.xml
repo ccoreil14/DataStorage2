@@ -47,9 +47,9 @@ android:hint="Optimal Number of minutes"
         android:layout_marginTop="30px" />
 
     <Button
-        android:text="Add this task"
+        android:text="Update this task"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/addTaskBtn" />
+        android:id="@+id/updateTaskBtn" />
 
 </LinearLayout>
