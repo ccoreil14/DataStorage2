@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
                 else if(tasks.get(position).getUrg().equals("Medium"))
                 {
-                    view.setBackgroundColor(Color.GREEN);
+                    view.setBackgroundColor(Color.CYAN);
                 }
                 else if(tasks.get(position).getUrg().equals("High"))
                 {
