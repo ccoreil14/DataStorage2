@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener {
@@ -55,6 +57,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private List<Task> tasks;
     private ArrayAdapter<Task> adapter;
     private RadioGroup sortBtns;
+    private RadioButton sortUrgBtn;
+    private RadioButton sortAlphBtn;
+    private RadioButton sortMostTimeBtn;
+    private RadioButton sortLeastTimeBtn;
     DBHandler db;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -86,8 +92,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         sortBtns = (RadioGroup) this.findViewById(R.id.sortRadiosBtns);
         sortBtns.check(R.id.sortUrgencyBtn);
 
+        sortUrgBtn = (RadioButton) this.findViewById(R.id.sortUrgencyBtn);
+        sortAlphBtn = (RadioButton) this.findViewById(R.id.sortAlphabeticalBtn);
+        sortMostTimeBtn = (RadioButton) this.findViewById(R.id.sortMostTimeBtn);
+        sortLeastTimeBtn = (RadioButton) this.findViewById(R.id.sortLeastTimeBtn);
+
         tasks = db.getAllTasks();
         taskList = (ListView) findViewById(R.id.TaskList);
+
+        updateSorting();
         adapter = new ArrayAdapter<Task>(this, R.layout.activity_listview, tasks) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -150,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 });
                 readTaskDialog.show();
 
+
+
             }
         });
 
@@ -211,11 +226,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+
+        sortBtns.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+//                Log.d("Clicked","Button");
+                updateListView();
+            }
+        });
     }
 
     private void updateListView() {
         Log.d("Update called: ", "True");
         tasks = db.getAllTasks();
+        updateSorting();
         adapter = new ArrayAdapter<Task>(this, R.layout.activity_listview, tasks) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -357,4 +382,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
+
+    public void updateSorting(){
+        if(sortUrgBtn.isChecked()){
+            Log.d("q","Urgent!");
+            tasks = db.getTasksUrgent();
+        }else if(sortAlphBtn.isChecked()){
+            Log.d("q","Alphabetical!");
+            tasks = db.getTasksAlphabetized();
+        }else if(sortMostTimeBtn.isChecked()){
+            Log.d("q","Most Time!");
+            tasks = db.getTasksMostTime();
+        }else if(sortLeastTimeBtn.isChecked()){
+            Log.d("q","Least Time!");
+            tasks = db.getTasksLeastTime();
+        }
+    }
+
 }

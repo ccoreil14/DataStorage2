@@ -105,6 +105,106 @@ public class DBHandler extends SQLiteOpenHelper {
         return taskList;
     }
 
+    public List<Task> getTasksAlphabetized(){
+        List<Task> taskList = new ArrayList<Task>();
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(TABLE_TASKS, null, null, null, null, null, "task_name");
+
+// looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Task task = new Task();
+                task.setId(Integer.parseInt(cursor.getString(0)));
+                task.setMinutes(Integer.parseInt(cursor.getString(1)));
+                task.setName(cursor.getString(2));
+                task.setDesc(cursor.getString(3));
+                task.setUrg(cursor.getString(4));
+                task.setCompletion(cursor.getString(5));
+                task.setTimerNum(Integer.parseInt(cursor.getString(6)));
+// Adding contact to list
+                taskList.add(task);
+            } while (cursor.moveToNext());
+        }
+        return  taskList;
+    }
+
+    public List<Task> getTasksUrgent(){
+        List<Task> taskList = new ArrayList<Task>();
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(TABLE_TASKS, null, null, null, null, null, "task_urgency");
+
+// looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Task task = new Task();
+                task.setId(Integer.parseInt(cursor.getString(0)));
+                task.setMinutes(Integer.parseInt(cursor.getString(1)));
+                task.setName(cursor.getString(2));
+                task.setDesc(cursor.getString(3));
+                task.setUrg(cursor.getString(4));
+                task.setCompletion(cursor.getString(5));
+                task.setTimerNum(Integer.parseInt(cursor.getString(6)));
+// Adding contact to list
+                taskList.add(task);
+            } while (cursor.moveToNext());
+        }
+        return  taskList;
+    }
+
+    public List<Task> getTasksMostTime(){
+        List<Task> taskList = new ArrayList<Task>();
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(TABLE_TASKS, null, null, null, null, null, "task_minutes DESC");
+
+// looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Task task = new Task();
+                task.setId(Integer.parseInt(cursor.getString(0)));
+                task.setMinutes(Integer.parseInt(cursor.getString(1)));
+                task.setName(cursor.getString(2));
+                task.setDesc(cursor.getString(3));
+                task.setUrg(cursor.getString(4));
+                task.setCompletion(cursor.getString(5));
+                task.setTimerNum(Integer.parseInt(cursor.getString(6)));
+// Adding contact to list
+                taskList.add(task);
+            } while (cursor.moveToNext());
+        }
+        return  taskList;
+    }
+
+    public List<Task> getTasksLeastTime(){
+        List<Task> taskList = new ArrayList<Task>();
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(TABLE_TASKS, null, null, null, null, null, "task_minutes ASC");
+
+// looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Task task = new Task();
+                task.setId(Integer.parseInt(cursor.getString(0)));
+                task.setMinutes(Integer.parseInt(cursor.getString(1)));
+                task.setName(cursor.getString(2));
+                task.setDesc(cursor.getString(3));
+                task.setUrg(cursor.getString(4));
+                task.setCompletion(cursor.getString(5));
+                task.setTimerNum(Integer.parseInt(cursor.getString(6)));
+// Adding contact to list
+                taskList.add(task);
+            } while (cursor.moveToNext());
+        }
+        return  taskList;
+    }
+
     public int getTaskCount() {
         String countQuery = "SELECT * FROM " + TABLE_TASKS;
         SQLiteDatabase db = this.getReadableDatabase();
