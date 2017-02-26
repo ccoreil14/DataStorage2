@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         openEditTaskDialogBtn = (Button) readTaskDialog.findViewById(R.id.openEditDialogBtn);
         openEditTaskDialogBtn.setOnClickListener(this);
 
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -184,6 +186,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         {
             readTaskDialog.dismiss();
             Log.d("this shit-->", currentTask.getName());
+
+            nameField = (EditText) editTaskDialog.findViewById(R.id.nameField);
+            descField = (EditText) editTaskDialog.findViewById(R.id.descField);
+            minuteField = (EditText) editTaskDialog.findViewById(R.id.minuteField);
+            urgencyField = (Spinner) editTaskDialog.findViewById(R.id.urgencySpinner);
+
+            nameField.setText(currentTask.getName());
+            descField.setText(currentTask.getDesc());
+            minuteField.setText("" + currentTask.getMinutes());
+            switch(currentTask.getUrg()){
+                case "Low":
+                    urgencyField.setSelection(0);
+                    break;
+                case "Medium":
+                    urgencyField.setSelection(1);
+                    break;
+                case "High":
+                    urgencyField.setSelection(2);
+                    break;
+                case "Critical":
+                    urgencyField.setSelection(3);
+                    break;
+            }
+
+            editTaskDialog.show();
+            updateTaskBtn = (Button) editTaskDialog.findViewById(R.id.updateTaskBtn);
+            updateTaskBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateTaskFromForm(currentTask.getId(),Integer.parseInt(minuteField.getText().toString()),nameField.getText().toString(),descField.getText().toString(),urgencyField.getSelectedItem().toString(),"Not Complete", 0);
+                    editTaskDialog.dismiss();
+                }
+            });
         }
     }
 
