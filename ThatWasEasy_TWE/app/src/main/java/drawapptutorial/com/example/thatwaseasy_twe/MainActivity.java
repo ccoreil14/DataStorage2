@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button openEditTaskDialogBtn;
     private Button addTaskBtn;
     private Button updateTaskBtn;
+    private Button deleteTaskBtn;
     private ListView taskList;
     private Task currentTask;
     private List<Task> tasks;
@@ -73,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         openEditTaskDialogBtn = (Button) readTaskDialog.findViewById(R.id.openEditDialogBtn);
         openEditTaskDialogBtn.setOnClickListener(this);
 
+        deleteTaskBtn = (Button) readTaskDialog.findViewById(R.id.deleteTaskBtn);
+        deleteTaskBtn.setOnClickListener(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -83,7 +86,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView,parent);
-                if(tasks.get(position).getUrg().equals("Low")){
+                if(tasks.get(position).getCompletion().equals("Complete")){
+                    view.setBackgroundColor(Color.GREEN);
+                }
+                else if(tasks.get(position).getUrg().equals("Low")){
                     view.setBackgroundColor(Color.BLUE);
                 }
                 else if(tasks.get(position).getUrg().equals("Medium"))
@@ -117,6 +123,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 readDesc.setText(currentTask.getDesc());
                 optimalTime.setText("" + currentTask.getMinutes());
                 isComplete.setText(currentTask.getCompletion());
+                if(currentTask.getCompletion().equals("Not Complete")){
+                    isComplete.setChecked(false);
+                }
+                else{
+                    isComplete.setChecked(true);
+                }
                 isComplete.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -297,6 +309,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     editTaskDialog.dismiss();
                 }
             });
+        }else if(v.getId() == R.id.deleteTaskBtn){
+            db.deleteTask(currentTask);
+            readTaskDialog.dismiss();
+            updateListView();
         }
     }
 
