@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Dialog readTaskDialog;
     private EditText nameField;
     private TextView readName;
+    private TextView readUrgency;
     private EditText descField;
     private TextView readDesc;
     private EditText minuteField;
@@ -135,12 +136,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 currentTask = (Task) parent.getItemAtPosition(position);
                 Log.d("Task: ", "" + currentTask.getId());
                 readName = (TextView) readTaskDialog.findViewById(R.id.readName);
+                readUrgency = (TextView) readTaskDialog.findViewById(R.id.readUrgency);
                 readDesc = (TextView) readTaskDialog.findViewById(R.id.readDesc);
                 optimalTime = (TextView) readTaskDialog.findViewById(R.id.optimalTime);
                 isComplete = (CheckBox) readTaskDialog.findViewById(R.id.isComplete);
                 readName.setText(currentTask.getName());
                 readDesc.setText(currentTask.getDesc());
-                optimalTime.setText("" + currentTask.getMinutes());
+                readUrgency.setText(currentTask.getUrg()+" Urgency");
+                optimalTime.setText("Optimal Minutes:" + currentTask.getMinutes());
                 isComplete.setText(currentTask.getCompletion());
                 if(currentTask.getCompletion().equals("Not Complete")){
                     isComplete.setChecked(false);
