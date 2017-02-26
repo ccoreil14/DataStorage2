@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if(tasks.get(position).getCompletion().equals("Complete")){
                     view.setBackgroundColor(Color.GREEN);
                 }
-                else if(tasks.get(position).getUrg().equals("Low")){
+                else if(tasks.get(position).getUrg().equals("Small")){
                     view.setBackgroundColor(Color.BLUE);
                 }
                 else if(tasks.get(position).getUrg().equals("Medium"))
@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if(tasks.get(position).getCompletion().equals("Complete")){
                     view.setBackgroundColor(Color.GREEN);
                 }
-                else if(tasks.get(position).getUrg().equals("Low")){
+                else if(tasks.get(position).getUrg().equals("Small")){
                     view.setBackgroundColor(Color.BLUE);
                 }
                 else if(tasks.get(position).getUrg().equals("Medium"))
@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             descField.setText(currentTask.getDesc());
             minuteField.setText("" + currentTask.getMinutes());
             switch (currentTask.getUrg()) {
-                case "Low":
+                case "Small":
                     urgencyField.setSelection(0);
                     break;
                 case "Medium":

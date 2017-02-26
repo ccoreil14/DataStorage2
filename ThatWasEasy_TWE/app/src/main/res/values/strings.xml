@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ThatWasEasy_TWE</string>
     <string-array name="urgencyOptions">
-        <item>Low</item>
+        <item>Small</item>
         <item>Medium</item>
         <item>High</item>
         <item>Critical</item>
