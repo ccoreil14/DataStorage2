@@ -74,6 +74,6 @@ public class Task {
 
     @Override
     public String toString(){
-        return getName();
+        return getName() + "- Optimal Time: " + getMinutes();
     }
 }

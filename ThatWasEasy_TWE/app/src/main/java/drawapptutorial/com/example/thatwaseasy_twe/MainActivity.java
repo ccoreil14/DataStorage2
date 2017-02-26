@@ -183,7 +183,31 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void updateListView() {
         tasks = db.getAllTasks();
-        adapter = new ArrayAdapter<Task>(this, R.layout.activity_listview, tasks);
+        adapter = new ArrayAdapter<Task>(this, R.layout.activity_listview, tasks) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView,parent);
+                if(tasks.get(position).getCompletion().equals("Complete")){
+                    view.setBackgroundColor(Color.GREEN);
+                }
+                else if(tasks.get(position).getUrg().equals("Low")){
+                    view.setBackgroundColor(Color.BLUE);
+                }
+                else if(tasks.get(position).getUrg().equals("Medium"))
+                {
+                    view.setBackgroundColor(Color.CYAN);
+                }
+                else if(tasks.get(position).getUrg().equals("High"))
+                {
+                    view.setBackgroundColor(Color.YELLOW);
+                }
+                else if(tasks.get(position).getUrg().equals("Critical"))
+                {
+                    view.setBackgroundColor(Color.RED);
+                }
+                return view;
+            }
+        };
         taskList.setAdapter(adapter);
     }
 
@@ -254,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             updateTaskBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    updateTaskFromForm(currentTask.getId(), Integer.parseInt(minuteField.getText().toString()), nameField.getText().toString(), descField.getText().toString(), urgencyField.getSelectedItem().toString(), "Not Complete", 0);
+                    updateTaskFromForm(currentTask.getId(), Integer.parseInt(minuteField.getText().toString()), nameField.getText().toString(), descField.getText().toString(), urgencyField.getSelectedItem().toString(), currentTask.getCompletion(), currentTask.getMinutes());
                     editTaskDialog.dismiss();
                 }
             });
