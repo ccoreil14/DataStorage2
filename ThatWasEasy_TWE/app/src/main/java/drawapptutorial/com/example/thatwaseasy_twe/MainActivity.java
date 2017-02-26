@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Task currentTask;
     private List<Task> tasks;
     private ArrayAdapter<Task> adapter;
+    private RadioGroup sortBtns;
     DBHandler db;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -74,8 +76,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         openEditTaskDialogBtn.setOnClickListener(this);
 
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sortBtns = (RadioGroup) this.findViewById(R.id.sortRadiosBtns);
+        sortBtns.check(R.id.sortUrgencyBtn);
 
         tasks = db.getAllTasks();
         taskList = (ListView) findViewById(R.id.TaskList);
