@@ -1,13 +1,16 @@
 package drawapptutorial.com.example.thatwaseasy_twe;
 
 import android.app.Dialog;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -16,6 +19,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.w3c.dom.Text;
 
@@ -41,7 +49,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button updateTaskBtn;
     private ListView taskList;
     private Task currentTask;
+    private List<Task> tasks;
+    private ArrayAdapter<Task> adapter;
     DBHandler db;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +73,35 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         openEditTaskDialogBtn.setOnClickListener(this);
 
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        List<Task> tasks = db.getAllTasks();
+        tasks = db.getAllTasks();
         taskList = (ListView) findViewById(R.id.TaskList);
-        ArrayAdapter<Task> adapter = new ArrayAdapter<Task>(this, R.layout.activity_listview, tasks);
+        adapter = new ArrayAdapter<Task>(this, R.layout.activity_listview, tasks) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView,parent);
+                if(tasks.get(position).getUrg().equals("Low")){
+                    view.setBackgroundColor(Color.BLUE);
+                }
+                else if(tasks.get(position).getUrg().equals("Medium"))
+                {
+                    view.setBackgroundColor(Color.GREEN);
+                }
+                else if(tasks.get(position).getUrg().equals("High"))
+                {
+                    view.setBackgroundColor(Color.YELLOW);
+                }
+                else if(tasks.get(position).getUrg().equals("Critical"))
+                {
+                    view.setBackgroundColor(Color.RED);
+                }
+                return view;
+            }
+        };
         taskList.setAdapter(adapter);
+
         taskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -96,27 +132,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //        });
 
         addTaskBtn = (Button) addTaskDialog.findViewById(R.id.addTaskBtn);
-        addTaskBtn.setOnClickListener(new View.OnClickListener(){
+        addTaskBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 nameField = (EditText) addTaskDialog.findViewById(R.id.nameField);
                 descField = (EditText) addTaskDialog.findViewById(R.id.descField);
                 minuteField = (EditText) addTaskDialog.findViewById(R.id.minuteField);
                 urgencyField = (Spinner) addTaskDialog.findViewById(R.id.urgencySpinner);
-                addTaskFromForm(Integer.parseInt( minuteField.getText().toString()), nameField.getText().toString(), descField.getText().toString(), urgencyField.getSelectedItem().toString());
+                addTaskFromForm(Integer.parseInt(minuteField.getText().toString()), nameField.getText().toString(), descField.getText().toString(), urgencyField.getSelectedItem().toString());
                 seeListInConsole();
                 nameField.setText("");
                 descField.setText("");
                 minuteField.setText("");
                 urgencyField.setSelection(0);
+                updateListView();
                 addTaskDialog.dismiss();
+
             }
         });
-
-
-
-
-
 
 
 //        Log.d("Insert: ", "Inserting ..");
@@ -143,24 +176,32 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            // Writing shops to log
 //            Log.d("Task Yo: : ", log);
 //        }
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    private void updateListView() {
+        tasks = db.getAllTasks();
+        adapter = new ArrayAdapter<Task>(this, R.layout.activity_listview, tasks);
+        taskList.setAdapter(adapter);
     }
 
 
-
-
-    private void addTaskFromForm(int minutesNum, String taskName, String taskDesc, String urgencyType){
+    private void addTaskFromForm(int minutesNum, String taskName, String taskDesc, String urgencyType) {
         db.addTask(new Task(minutesNum, taskName, taskDesc, urgencyType, "Not Complete", 0));
     }
 
-    private  void updateTaskFromForm(int id, int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum){
+    private void updateTaskFromForm(int id, int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum) {
         Task updatedTask = new Task(id, minutesNum, taskName, taskDesc, urgencyType, isComplete, timerNum);
         db.updateTask(updatedTask);
+        updateListView();
     }
 
-    private void seeListInConsole(){
-        List<Task> tasks= db.getAllTasks();
+    private void seeListInConsole() {
+        List<Task> tasks = db.getAllTasks();
 
-        for (Task task: tasks) {
+        for (Task task : tasks) {
             String log = "Id: " + task.getId() + " ,Name: " + task.getName() + " ,Description: " + task.getDesc() + " ,Estimated Minutes to complete: " + task.getMinutes() + " ,Urgency: " + task.getUrg() + " ,Is it Completed?: " + task.getCompletion() + " ,Current Timer Num: " + task.getTimerNum();
             // Writing shops to log
             Log.d("Task Yo: : ", log);
@@ -179,11 +220,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.addBtn)
-        {
+        if (v.getId() == R.id.addBtn) {
             addTaskDialog.show();
-        }else if(v.getId() == R.id.openEditDialogBtn)
-        {
+        } else if (v.getId() == R.id.openEditDialogBtn) {
             readTaskDialog.dismiss();
             Log.d("this shit-->", currentTask.getName());
 
@@ -195,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             nameField.setText(currentTask.getName());
             descField.setText(currentTask.getDesc());
             minuteField.setText("" + currentTask.getMinutes());
-            switch(currentTask.getUrg()){
+            switch (currentTask.getUrg()) {
                 case "Low":
                     urgencyField.setSelection(0);
                     break;
@@ -215,11 +254,46 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             updateTaskBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    updateTaskFromForm(currentTask.getId(),Integer.parseInt(minuteField.getText().toString()),nameField.getText().toString(),descField.getText().toString(),urgencyField.getSelectedItem().toString(),"Not Complete", 0);
+                    updateTaskFromForm(currentTask.getId(), Integer.parseInt(minuteField.getText().toString()), nameField.getText().toString(), descField.getText().toString(), urgencyField.getSelectedItem().toString(), "Not Complete", 0);
                     editTaskDialog.dismiss();
                 }
             });
         }
     }
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Main Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
+    }
 }
