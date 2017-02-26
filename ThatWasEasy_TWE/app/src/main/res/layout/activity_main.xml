@@ -36,32 +36,39 @@
             android:id="@+id/addBtn"
             android:layout_weight="1"
             android:contextClickable="true" />
+        <RadioGroup android:layout_height="65dp"
+            android:layout_width="385dp"
+            android:orientation='horizontal'>
 
-        <RadioButton
-            android:text="Color"
-            android:layout_width="40px"
-            android:layout_height="wrap_content"
-            android:id="@+id/radioButton"
-            android:layout_weight="0.72" />
+            <RadioButton
+                android:text="Color"
+                android:layout_height="wrap_content"
+                android:id="@+id/sortUrgencyBtn"
+                android:layout_weight="0.72"
+                android:layout_width="wrap_content" />
 
-        <RadioButton
-            android:text="Most Time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/radioButton3" />
+            <RadioButton
+                android:text="Alphabetical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sortAlphabeticalBtn"
+                android:layout_weight="0.72" />
 
-        <RadioButton
-            android:text="Least Time"
-            android:layout_width="40px"
-            android:layout_height="wrap_content"
-            android:id="@+id/radioButton4"
-            android:layout_weight="1" />
+            <RadioButton
+                android:text="Most Time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sortMostTimeBtn"
+                android:layout_weight="0.72" />
 
-        <RadioButton
-            android:text="Alphabetical"
-            android:layout_width="40px"
-            android:layout_height="wrap_content"
-            android:id="@+id/radioButton2"
-            android:layout_weight="1" />
+            <RadioButton
+                android:text="Least Time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sortLeastTimeBtn"
+                android:layout_weight="0.72" />
+
+        </RadioGroup>
+
     </LinearLayout>
 </RelativeLayout>
