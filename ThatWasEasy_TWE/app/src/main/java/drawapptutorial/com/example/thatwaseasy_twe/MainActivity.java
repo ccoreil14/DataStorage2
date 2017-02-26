@@ -8,11 +8,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener {
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button openEditTaskDialogBtn;
     private Button addTaskBtn;
     private Button updateTaskBtn;
+    private ListView taskList;
     DBHandler db;
 
     @Override
@@ -38,9 +43,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         addTaskDialog.setContentView(R.layout.add_task_layout);
         addTaskDialog.setCancelable(false);
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        List<Task> tasks = db.getAllTasks();
+        taskList = (ListView) findViewById(R.id.TaskList);
+        ArrayAdapter<Task> adapter = new ArrayAdapter<Task>(this, R.layout.activity_listview, tasks);
+        taskList.setAdapter(adapter);
+        taskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("Task: ", "" + db.getTask(position+1));
+
+            }
+        });
+
+
         openAddTaskDialogBtn = (Button) findViewById(R.id.addBtn);
         openAddTaskDialogBtn.setOnClickListener(this);
         openAddTaskDialogBtn.setOnClickListener(new View.OnClickListener(){
@@ -60,6 +78,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 urgencyField = (Spinner) addTaskDialog.findViewById(R.id.urgencySpinner);
                 addTaskFromForm(Integer.parseInt( minuteField.getText().toString()), nameField.getText().toString(), descField.getText().toString(), urgencyField.getSelectedItem().toString());
                 seeListInConsole();
+                nameField.setText("");
+                descField.setText("");
+                minuteField.setText("");
+                urgencyField.setSelection(0);
                 addTaskDialog.dismiss();
             }
         });
@@ -132,4 +154,5 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onClick(View v) {
 
     }
+
 }

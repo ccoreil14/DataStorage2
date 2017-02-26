@@ -72,5 +72,8 @@ public class Task {
     }
     public int getTimerNum() {return timerNum;}
 
-
+    @Override
+    public String toString(){
+        return getId() + " - " + getName();
+    }
 }
