@@ -15,6 +15,9 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +28,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Dialog editTaskDialog;
     private Dialog readTaskDialog;
     private EditText nameField;
+    private TextView readName;
     private EditText descField;
+    private TextView readDesc;
     private EditText minuteField;
+    private TextView optimalTime;
     private Spinner urgencyField;
     private CheckBox isComplete;
     private Button openAddTaskDialogBtn;
@@ -34,14 +40,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button addTaskBtn;
     private Button updateTaskBtn;
     private ListView taskList;
+    private Task currentTask;
     DBHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         db = new DBHandler(this);
         addTaskDialog = new Dialog(this);
+        readTaskDialog = new Dialog(this);
+        editTaskDialog = new Dialog(this);
         addTaskDialog.setContentView(R.layout.add_task_layout);
+        readTaskDialog.setContentView(R.layout.read_task_layout);
+        editTaskDialog.setContentView(R.layout.update_task_layout);
         addTaskDialog.setCancelable(false);
+
+        openEditTaskDialogBtn = (Button) readTaskDialog.findViewById(R.id.openEditDialogBtn);
+        openEditTaskDialogBtn.setOnClickListener(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -53,7 +67,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         taskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("Task: ", "" + db.getTask(position+1));
+
+                currentTask = (Task) parent.getItemAtPosition(position);
+                Log.d("Task: ", "" + currentTask.getId());
+                readName = (TextView) readTaskDialog.findViewById(R.id.readName);
+                readDesc = (TextView) readTaskDialog.findViewById(R.id.readDesc);
+                optimalTime = (TextView) readTaskDialog.findViewById(R.id.optimalTime);
+                isComplete = (CheckBox) readTaskDialog.findViewById(R.id.isComplete);
+                readName.setText(currentTask.getName());
+                readDesc.setText(currentTask.getDesc());
+                optimalTime.setText("" + currentTask.getMinutes());
+                isComplete.setText(currentTask.getCompletion());
+                readTaskDialog.show();
 
             }
         });
@@ -61,12 +86,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         openAddTaskDialogBtn = (Button) findViewById(R.id.addBtn);
         openAddTaskDialogBtn.setOnClickListener(this);
-        openAddTaskDialogBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                addTaskDialog.show();
-            }
-        });
+//        openAddTaskDialogBtn.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v){
+//
+//            }
+//        });
 
         addTaskBtn = (Button) addTaskDialog.findViewById(R.id.addTaskBtn);
         addTaskBtn.setOnClickListener(new View.OnClickListener(){
@@ -152,7 +177,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onClick(View v) {
-
+        if(v.getId() == R.id.addBtn)
+        {
+            addTaskDialog.show();
+        }else if(v.getId() == R.id.openEditDialogBtn)
+        {
+            readTaskDialog.dismiss();
+            Log.d("this shit-->", currentTask.getName());
+        }
     }
 
 }
