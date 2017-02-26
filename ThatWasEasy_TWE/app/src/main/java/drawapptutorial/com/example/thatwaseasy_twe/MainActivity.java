@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -116,6 +117,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 readDesc.setText(currentTask.getDesc());
                 optimalTime.setText("" + currentTask.getMinutes());
                 isComplete.setText(currentTask.getCompletion());
+                isComplete.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if(isChecked){
+                            currentTask.setCompletion("Complete");
+                        }
+                        else{
+                            currentTask.setCompletion("Not Complete");
+                        }
+                        isComplete.setText(currentTask.getCompletion());
+                        updateTaskFromForm(currentTask.getId(), currentTask.getMinutes(),currentTask.getName(),currentTask.getDesc(),currentTask.getUrg(),currentTask.getCompletion(),currentTask.getTimerNum());
+                    }
+                });
                 readTaskDialog.show();
 
             }
@@ -182,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void updateListView() {
+        Log.d("Update called: ", "True");
         tasks = db.getAllTasks();
         adapter = new ArrayAdapter<Task>(this, R.layout.activity_listview, tasks) {
             @Override
