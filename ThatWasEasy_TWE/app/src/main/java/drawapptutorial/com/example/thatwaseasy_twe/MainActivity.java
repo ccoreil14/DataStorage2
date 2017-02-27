@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -28,11 +30,8 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener {
 
@@ -53,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button addTaskBtn;
     private Button updateTaskBtn;
     private Button deleteTaskBtn;
+    private Button timerBtn;
     private ListView taskList;
     private Task currentTask;
     private List<Task> tasks;
@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         deleteTaskBtn = (Button) readTaskDialog.findViewById(R.id.deleteTaskBtn);
         deleteTaskBtn.setOnClickListener(this);
 
+        timerBtn = (Button) readTaskDialog.findViewById(R.id.timerBtn);
+        timerBtn.setOnClickListener(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -105,8 +107,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         adapter = new ArrayAdapter<Task>(this, R.layout.activity_listview, tasks) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView,parent);
-                if(tasks.get(position).getCompletion().equals("Complete")){
+                TextView view = (TextView) super.getView(position, convertView,parent);
+
+                view.setText(tasks.get(position).toString());
+
+                if (currentTimer != null && tasks.get(position) != currentTask) {
+                    view.setBackgroundColor(Color.GRAY);
+                }
+                else if(tasks.get(position).getCompletion().equals("Complete")){
                     view.setBackgroundColor(Color.GREEN);
                 }
                 else if(tasks.get(position).getUrg().equals("Small")){
@@ -132,8 +140,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         taskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (currentTimer != null && tasks.get(position) != currentTask)
+                    return;
 
-                currentTask = (Task) parent.getItemAtPosition(position);
+                currentTask = tasks.get(position);
                 Log.d("Task: ", "" + currentTask.getId());
                 readName = (TextView) readTaskDialog.findViewById(R.id.readName);
                 readUrgency = (TextView) readTaskDialog.findViewById(R.id.readUrgency);
@@ -165,21 +175,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     }
                 });
                 readTaskDialog.show();
-
-
-
-            }
+           }
         });
-
 
         openAddTaskDialogBtn = (Button) findViewById(R.id.addBtn);
         openAddTaskDialogBtn.setOnClickListener(this);
-//        openAddTaskDialogBtn.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v){
-//
-//            }
-//        });
 
         addTaskBtn = (Button) addTaskDialog.findViewById(R.id.addTaskBtn);
         addTaskBtn.setOnClickListener(new View.OnClickListener() {
@@ -197,10 +197,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 urgencyField.setSelection(0);
                 updateListView();
                 addTaskDialog.dismiss();
-
+                updateListView();
             }
         });
-
 
 //        Log.d("Insert: ", "Inserting ..");
 //        db.addTask(new Task(3, "Make Test Tasks", "I need to make a test task to make sure all the functions are all working appropriately", "High", "Not Complete", 0));
@@ -211,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //        List<Task> tasks= db.getAllTasks();
 //
 //        for (Task task: tasks) {
-//            String log = "Id: " + task.getId() + " ,Name: " + task.getName() + " ,Description: " + task.getDesc() + " ,Estimated Minutes to complete: " + task.getMinutes() + " ,Urgency: " + task.getUrg() + " ,Is it Completed?: " + task.getCompletion() + " ,Current Timer Num: " + task.getTimerNum();
+//            String log = "Id: " + task.getId() + " ,Name: " + task.getName() + " ,Description: " + task.getDesc() + " ,Estimated Minutes to complete: " + task.getMinutes() + " ,Urgency: " + task.getUrg() + " ,Is it Completed?: " + task.getCompletion() + " ,Current TimerTask Num: " + task.getTimerNum();
 //            // Writing shops to log
 //            Log.d("Task: : ", log);
 //        }
@@ -222,14 +221,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //        tasks = db.getAllTasks();
 //
 //        for (Task task: tasks) {
-//            String log = "Id: " + task.getId() + " ,Name: " + task.getName() + " ,Description: " + task.getDesc() + " ,Estimated Minutes to complete: " + task.getMinutes() + " ,Urgency: " + task.getUrg() + " ,Is it Completed?: " + task.getCompletion() + " ,Current Timer Num: " + task.getTimerNum();
+//            String log = "Id: " + task.getId() + " ,Name: " + task.getName() + " ,Description: " + task.getDesc() + " ,Estimated Minutes to complete: " + task.getMinutes() + " ,Urgency: " + task.getUrg() + " ,Is it Completed?: " + task.getCompletion() + " ,Current TimerTask Num: " + task.getTimerNum();
 //            // Writing shops to log
 //            Log.d("Task Yo: : ", log);
 //        }
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
 
         sortBtns.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -238,56 +236,36 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 updateListView();
             }
         });
+
+        for (Task task : tasks) {
+            if (task.isRunning()) {
+                currentTask = task;
+                startTimer();
+            }
+        }
     }
 
     private void updateListView() {
         Log.d("Update called: ", "True");
-        tasks = db.getAllTasks();
+        //tasks = db.getAllTasks();
         updateSorting();
-        adapter = new ArrayAdapter<Task>(this, R.layout.activity_listview, tasks) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView,parent);
-                if(tasks.get(position).getCompletion().equals("Complete")){
-                    view.setBackgroundColor(Color.GREEN);
-                }
-                else if(tasks.get(position).getUrg().equals("Small")){
-                    view.setBackgroundColor(Color.BLUE);
-                }
-                else if(tasks.get(position).getUrg().equals("Medium"))
-                {
-                    view.setBackgroundColor(Color.CYAN);
-                }
-                else if(tasks.get(position).getUrg().equals("High"))
-                {
-                    view.setBackgroundColor(Color.YELLOW);
-                }
-                else if(tasks.get(position).getUrg().equals("Critical"))
-                {
-                    view.setBackgroundColor(Color.RED);
-                }
-                return view;
-            }
-        };
-        taskList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
 
     private void addTaskFromForm(int minutesNum, String taskName, String taskDesc, String urgencyType) {
-        db.addTask(new Task(minutesNum, taskName, taskDesc, urgencyType, "Not Complete", 0));
+        db.addTask(new Task(minutesNum, taskName, taskDesc, urgencyType, "Not Complete", 0, false));
     }
 
     private void updateTaskFromForm(int id, int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum) {
-        Task updatedTask = new Task(id, minutesNum, taskName, taskDesc, urgencyType, isComplete, timerNum);
+        Task updatedTask = new Task(id, minutesNum, taskName, taskDesc, urgencyType, isComplete, timerNum, false);
         db.updateTask(updatedTask);
         updateListView();
     }
 
     private void seeListInConsole() {
-        List<Task> tasks = db.getAllTasks();
-
         for (Task task : tasks) {
-            String log = "Id: " + task.getId() + " ,Name: " + task.getName() + " ,Description: " + task.getDesc() + " ,Estimated Minutes to complete: " + task.getMinutes() + " ,Urgency: " + task.getUrg() + " ,Is it Completed?: " + task.getCompletion() + " ,Current Timer Num: " + task.getTimerNum();
+            String log = "Id: " + task.getId() + " ,Name: " + task.getName() + " ,Description: " + task.getDesc() + " ,Estimated Minutes to complete: " + task.getMinutes() + " ,Urgency: " + task.getUrg() + " ,Is it Completed?: " + task.getCompletion() + " ,Current TimerTask Num: " + task.getTimerNum();
             // Writing shops to log
             Log.d("Task Yo: : ", log);
         }
@@ -348,6 +326,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             readTaskDialog.dismiss();
             updateListView();
         }
+        else if (v.getId() == R.id.timerBtn) {
+            startOrFinishTimer();
+        }
     }
 
     /**
@@ -400,6 +381,75 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Log.d("q","Least Time!");
             tasks = db.getTasksLeastTime();
         }
+
+        if (currentTask != null) {
+            for (Task task : tasks) {
+                if (currentTask.getId() == task.getId())
+                    currentTask = task;
+            }
+        }
     }
 
+    private void disableInterface() {
+        openAddTaskDialogBtn.setEnabled(false);
+        sortBtns.setEnabled(false);
+        sortUrgBtn.setEnabled(false);
+        sortAlphBtn.setEnabled(false);
+        sortMostTimeBtn.setEnabled(false);
+        sortLeastTimeBtn.setEnabled(false);
+        openEditTaskDialogBtn.setEnabled(false);
+        deleteTaskBtn.setEnabled(false);
+    }
+
+    private void enableInterface() {
+        openAddTaskDialogBtn.setEnabled(true);
+        sortBtns.setEnabled(true);
+        sortUrgBtn.setEnabled(true);
+        sortAlphBtn.setEnabled(true);
+        sortMostTimeBtn.setEnabled(true);
+        sortLeastTimeBtn.setEnabled(true);
+        openEditTaskDialogBtn.setEnabled(true);
+        deleteTaskBtn.setEnabled(true);
+    }
+
+    private void startOrFinishTimer() {
+        if (currentTimer == null)
+            startTimer();
+        else
+            finishTimer();
+    }
+
+    private TimerTask currentTimer;
+    private void startTimer() {
+        currentTimer = new TimerTask(new TimerCallback() {
+            @Override
+            public void update(double time) {
+                updateTime(time);
+            }
+        });
+        currentTimer.execute(currentTask.getTimerNum() / 1000.0);
+        disableInterface();
+        readTaskDialog.dismiss();
+        timerBtn.setText("Stop Timer");
+
+        currentTask.setIsRunning(true);
+        db.updateTask(currentTask);
+    }
+
+    private void updateTime(double time) {
+        currentTask.setTimerNum((int)(time * 1000));
+        db.updateTask(currentTask);
+        updateListView();
+    }
+
+    private void finishTimer() {
+        currentTimer.finish();
+        currentTimer = null;
+        enableInterface();
+        readTaskDialog.dismiss();
+        timerBtn.setText("Start Timer");
+
+        currentTask.setIsRunning(false);
+        db.updateTask(currentTask);
+    }
 }

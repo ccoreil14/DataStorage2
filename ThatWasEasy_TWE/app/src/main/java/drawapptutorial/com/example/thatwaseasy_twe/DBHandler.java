@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DBHandler extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     // Database Name
     private static final String DATABASE_NAME = "taskList";
     // Contacts table name
@@ -26,6 +26,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_URGENCY = "task_urgency";
     private static final String KEY_COMPLETION_STATUS = "task_isComplete";
     private static final String KEY_TIMER_NUM= "task_timer_num";
+    private static final String KEY_RUNNING="task_running";
 
     public DBHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -34,7 +35,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TASK_TABLE = "CREATE TABLE " + TABLE_TASKS+ "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"+ KEY_NUM_MINUTES + " NUMBER," + KEY_NAME + " TEXT,"
-                + KEY_DESC + " TEXT,"  + KEY_URGENCY + " TEXT,"  + KEY_COMPLETION_STATUS + " TEXT,"  + KEY_TIMER_NUM + " TEXT" + ")";
+                + KEY_DESC + " TEXT,"  + KEY_URGENCY + " TEXT,"  + KEY_COMPLETION_STATUS + " TEXT,"  + KEY_TIMER_NUM + " TEXT," + KEY_RUNNING + " BOOLEAN" + ")";
         db.execSQL(CREATE_TASK_TABLE);
     }
 
@@ -71,8 +72,15 @@ public class DBHandler extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
-        Task information = new Task(Integer.parseInt(cursor.getString(0)),
-                Integer.parseInt(cursor.getString(1)), cursor.getString(2),  cursor.getString(3), cursor.getString(4), cursor.getString(5), Integer.parseInt(cursor.getString(6)));
+        Task information = new Task(
+                Integer.parseInt(cursor.getString(0)),
+                Integer.parseInt(cursor.getString(1)),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getString(4),
+                cursor.getString(5),
+                Integer.parseInt(cursor.getString(6)),
+                "1".equals(cursor.getString(7)));
 // return shop
         return information;
     }
@@ -96,6 +104,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 task.setUrg(cursor.getString(4));
                 task.setCompletion(cursor.getString(5));
                 task.setTimerNum(Integer.parseInt(cursor.getString(6)));
+                task.setIsRunning("1".equals(cursor.getString(7)));
 // Adding contact to list
                 taskList.add(task);
             } while (cursor.moveToNext());
@@ -123,6 +132,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 task.setUrg(cursor.getString(4));
                 task.setCompletion(cursor.getString(5));
                 task.setTimerNum(Integer.parseInt(cursor.getString(6)));
+                task.setIsRunning("1".equals(cursor.getString(7)));
 // Adding contact to list
                 taskList.add(task);
             } while (cursor.moveToNext());
@@ -148,6 +158,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 task.setUrg(cursor.getString(4));
                 task.setCompletion(cursor.getString(5));
                 task.setTimerNum(Integer.parseInt(cursor.getString(6)));
+                task.setIsRunning("1".equals(cursor.getString(7)));
 // Adding contact to list
                 taskList.add(task);
             } while (cursor.moveToNext());
@@ -173,6 +184,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 task.setUrg(cursor.getString(4));
                 task.setCompletion(cursor.getString(5));
                 task.setTimerNum(Integer.parseInt(cursor.getString(6)));
+                task.setIsRunning("1".equals(cursor.getString(7)));
 // Adding contact to list
                 taskList.add(task);
             } while (cursor.moveToNext());
@@ -198,6 +210,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 task.setUrg(cursor.getString(4));
                 task.setCompletion(cursor.getString(5));
                 task.setTimerNum(Integer.parseInt(cursor.getString(6)));
+                task.setIsRunning("1".equals(cursor.getString(7)));
 // Adding contact to list
                 taskList.add(task);
             } while (cursor.moveToNext());
@@ -225,6 +238,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_NUM_MINUTES, task.getMinutes());
         values.put(KEY_COMPLETION_STATUS, task.getCompletion());
         values.put(KEY_TIMER_NUM, task.getTimerNum());
+        values.put(KEY_RUNNING, task.isRunning());
 
 // updating row
         return db.update(TABLE_TASKS, values, KEY_ID + " = ?",

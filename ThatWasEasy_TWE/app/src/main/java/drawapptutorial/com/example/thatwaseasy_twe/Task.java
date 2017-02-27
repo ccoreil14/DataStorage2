@@ -12,12 +12,13 @@ public class Task {
     private String urgencyType;
     private String isComplete;
     private int timerNum;
+    private boolean isRunning;
 
     public Task(){
 
     }
 
-    public Task(int id, int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum){
+    public Task(int id, int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum, boolean isRunning){
         this.id = id;
         this.minutesNum = minutesNum;
         this.taskName = taskName;
@@ -25,15 +26,17 @@ public class Task {
         this.urgencyType = urgencyType;
         this.isComplete = isComplete;
         this.timerNum = timerNum;
+        this.isRunning = isRunning;
     }
 
-    public Task(int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum){
+    public Task(int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum, boolean isRunning){
         this.minutesNum = minutesNum;
         this.taskName = taskName;
         this.taskDesc = taskDesc;
         this.urgencyType = urgencyType;
         this.isComplete = isComplete;
         this.timerNum = timerNum;
+        this.isRunning = isRunning;
     }
 
     public void setId(int id) {
@@ -72,8 +75,19 @@ public class Task {
     }
     public int getTimerNum() {return timerNum;}
 
+    public void setIsRunning(boolean isRunning) {
+        this.isRunning = isRunning;
+    }
+    public boolean isRunning() {return this.isRunning;}
+
     @Override
     public String toString(){
-        return getName() + "- Optimal Time: " + getMinutes();
+        String timerString = "" + timerNum % 60000 / 1000;
+        if (timerString.length() == 1)
+            timerString = "0" + timerString;
+        timerString = timerNum / 60000 + ":" + timerString;
+        timerString += "." + timerNum % 1000 / 100;
+
+        return getName() + " - Optimal Time: " + getMinutes() + " - Time Logged: " + timerString;
     }
 }
