@@ -199,9 +199,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 descField.setText("");
                 minuteField.setText("");
                 urgencyField.setSelection(0);
-                updateListView();
                 addTaskDialog.dismiss();
-                updateListView();
             }
         });
 
@@ -261,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void addTaskFromForm(int minutesNum, String taskName, String taskDesc, String urgencyType) {
         db.addTask(new Task(minutesNum, taskName, taskDesc, urgencyType, "Not Complete", 0, false, 0));
+        updateListView();
     }
 
     private void updateTaskFromForm(int id, int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum) {
@@ -374,18 +373,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void updateSorting(){
+        tasks.clear();
         if(sortUrgBtn.isChecked()){
             Log.d("q","Urgent!");
-            tasks = db.getTasksUrgent();
+            tasks.addAll(db.getTasksUrgent());
         }else if(sortAlphBtn.isChecked()){
             Log.d("q","Alphabetical!");
-            tasks = db.getTasksAlphabetized();
+            tasks.addAll(db.getTasksAlphabetized());
         }else if(sortMostTimeBtn.isChecked()){
             Log.d("q","Most Time!");
-            tasks = db.getTasksMostTime();
+            tasks.addAll(db.getTasksMostTime());
         }else if(sortLeastTimeBtn.isChecked()){
             Log.d("q","Least Time!");
-            tasks = db.getTasksLeastTime();
+            tasks.addAll(db.getTasksLeastTime());
         }
 
         if (currentTask != null) {
@@ -451,7 +451,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         currentTask.setTimerNum((int)(time * 1000));
         db.updateTask(currentTask);
-        updateListView();   
+        updateListView();
     }
 
     private void finishTimer() {
