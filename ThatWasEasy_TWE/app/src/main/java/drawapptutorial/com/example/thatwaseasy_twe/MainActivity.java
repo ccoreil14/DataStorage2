@@ -1,6 +1,10 @@
 package drawapptutorial.com.example.thatwaseasy_twe;
 
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -240,6 +244,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         for (Task task : tasks) {
             if (task.isRunning()) {
                 currentTask = task;
+                if (currentTask.getTimerStart() != 0)
+                    currentTask.setTimerNum((int)(System.currentTimeMillis() - currentTask.getTimerStart()));
                 startTimer();
             }
         }
@@ -254,11 +260,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
     private void addTaskFromForm(int minutesNum, String taskName, String taskDesc, String urgencyType) {
-        db.addTask(new Task(minutesNum, taskName, taskDesc, urgencyType, "Not Complete", 0, false));
+        db.addTask(new Task(minutesNum, taskName, taskDesc, urgencyType, "Not Complete", 0, false, 0));
     }
 
     private void updateTaskFromForm(int id, int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum) {
-        Task updatedTask = new Task(id, minutesNum, taskName, taskDesc, urgencyType, isComplete, timerNum, false);
+        Task updatedTask = new Task(id, minutesNum, taskName, taskDesc, urgencyType, isComplete, timerNum, false, 0);
         db.updateTask(updatedTask);
         updateListView();
     }
@@ -413,8 +419,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void startOrFinishTimer() {
-        if (currentTimer == null)
+        if (currentTimer == null) {
+            currentTask.setTimerStart(System.currentTimeMillis() - currentTask.getTimerNum());
             startTimer();
+        }
         else
             finishTimer();
     }
@@ -437,9 +445,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void updateTime(double time) {
+        if ((time / 60.0 > currentTask.getMinutes()) != (currentTask.getTimerNum() / 1000.0) / 60.0 > currentTask.getMinutes()) {
+            notifyOverTime();
+        }
+
         currentTask.setTimerNum((int)(time * 1000));
         db.updateTask(currentTask);
-        updateListView();
+        updateListView();   
     }
 
     private void finishTimer() {
@@ -451,5 +463,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         currentTask.setIsRunning(false);
         db.updateTask(currentTask);
+    }
+
+    private void notifyOverTime() {
+        Intent contentIntent = new Intent(this, MainActivity.class);
+        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), contentIntent, 0);
+
+        Notification notification = new Notification.Builder(this)
+                .setContentTitle("Over time on " + currentTask.getName())
+                .setContentText("You have gone over the preferred time of " + currentTask.getMinutes() + " minutes on the task " + currentTask.getName())
+                .setContentIntent(pIntent)
+                .setSmallIcon(R.drawable.common_plus_signin_btn_text_dark)
+                .setAutoCancel(true)
+                .build();
+
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        manager.notify(0, notification);
     }
 }

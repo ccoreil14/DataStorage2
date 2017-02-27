@@ -13,12 +13,13 @@ public class Task {
     private String isComplete;
     private int timerNum;
     private boolean isRunning;
+    private long timerStart;
 
     public Task(){
 
     }
 
-    public Task(int id, int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum, boolean isRunning){
+    public Task(int id, int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum, boolean isRunning, long timerStart){
         this.id = id;
         this.minutesNum = minutesNum;
         this.taskName = taskName;
@@ -27,9 +28,10 @@ public class Task {
         this.isComplete = isComplete;
         this.timerNum = timerNum;
         this.isRunning = isRunning;
+        this.timerStart = timerStart;
     }
 
-    public Task(int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum, boolean isRunning){
+    public Task(int minutesNum, String taskName, String taskDesc, String urgencyType, String isComplete, int timerNum, boolean isRunning, long timerStart){
         this.minutesNum = minutesNum;
         this.taskName = taskName;
         this.taskDesc = taskDesc;
@@ -37,6 +39,7 @@ public class Task {
         this.isComplete = isComplete;
         this.timerNum = timerNum;
         this.isRunning = isRunning;
+        this.timerStart = timerStart;
     }
 
     public void setId(int id) {
@@ -79,6 +82,11 @@ public class Task {
         this.isRunning = isRunning;
     }
     public boolean isRunning() {return this.isRunning;}
+
+    public void setTimerStart(long timerStart) {
+        this.timerStart = timerStart;
+    }
+    public long getTimerStart() {return this.timerStart;}
 
     @Override
     public String toString(){
