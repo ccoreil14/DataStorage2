@@ -466,6 +466,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void notifyOverTime() {
+        currentTask.setUrg("Critical");
+        updateTaskFromForm(currentTask.getId(),currentTask.getMinutes(), currentTask.getName(),currentTask.getDesc(), currentTask.getUrg(),currentTask.getCompletion(),currentTask.getTimerNum());
+        updateListView();
         Intent contentIntent = new Intent(this, MainActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), contentIntent, 0);
 
